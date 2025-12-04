@@ -1,53 +1,54 @@
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.util.Scanner;
 
 public class Main {
     public static void main (String[] args) {
+        Scanner sc = new Scanner(System.in);
+        OpcaoMenu opcao = null;
+        ConectaAPI cotacao = new ConectaAPI("c9ac2cedfa959c28352d38f6","USD", "BRL");
+        cotacao.consultarCotacao();
 
-        var baseCurrency = "USD";
-        var targetCurrency = "BRL";
-        var apiKey = "c9ac2cedfa959c28352d38f6";
-        var url = "https://v6.exchangerate-api.com/v6/"
-                + apiKey + "/latest/" + baseCurrency;
-
-        try {
-            var client = HttpClient.newHttpClient();
-            var request = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .build();
-            var response = client.
-                    send(request, HttpResponse.BodyHandlers.ofString());
-
-            System.out.println("Status HTTP: " + response.statusCode());
-
-            if( response.statusCode() != 200) {
-                System.out.println("Erro na requisição");
-                System.out.println(response.body());
-                return;
+        while (opcao != OpcaoMenu.SAIR) {
+            System.out.println("===== MENU CONVERSOR DE MOEDAS =====");
+            for (OpcaoMenu op : OpcaoMenu.values()) {
+                System.out.println(op.getCodigo() + " - " + op.getDescricao());
             }
-            String body = response.body();
 
-            JsonElement parsed = JsonParser.parseString(body);
-            JsonObject root = parsed.getAsJsonObject();
-            JsonObject rates = root.getAsJsonObject("conversion_rates");
-            double rate = rates.get(targetCurrency).getAsDouble();
-            System.out.printf("1 %s = %.6f %s%n",
-                    baseCurrency, rate, targetCurrency);
+            System.out.println("Escolha um opção: ");
+            int codigoEscolhido = sc.nextInt();
 
-            double amountUsd = 100.0;
-            double converted = amountUsd * rate;
-            System.out.printf("%.2f %s = %.2f %s%n",
-                    amountUsd, baseCurrency, converted, targetCurrency);
+            opcao = OpcaoMenu.fromCodigo(codigoEscolhido);
 
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Error: " + e.getMessage());
+            if (opcao == null) {
+                System.out.println("Opção inválida! Tente novamente. \n");
+                continue;
+            }
+
+            switch (opcao) {
+                case USDTOBRL:
+                    System.out.println(">>USDTOBRL selecionado");
+                    break;
+                case BRLTOUSD:
+                    System.out.println(">>BRLTOUSD selecionado");
+                    break;
+                case USDTOARL:
+                    System.out.println(">>USDTOARL selecionado");
+                    break;
+                case ARLTOUSD:
+                    System.out.println(">>ARLTOUSD selecionado");
+                    break;
+                case BRLTOARL:
+                    System.out.println(">>BRLTOARL selecionado");
+                    break;
+                case ARLTOBRL:
+                    System.out.println(">>ARLTOBRL selecionado");
+                    break;
+                case SAIR:
+                    System.out.println(">>SAIR selecionado");
+                    break;
+            }
+
+            System.out.println();
         }
+        sc.close();
     }
 }
