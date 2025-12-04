@@ -1,3 +1,7 @@
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -5,6 +9,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class ConectaAPI {
+
+    /**
+     * Evita criar um novo objeto a cada chamada
+     */
     private static final String API_URL_BASE = "https://v6.exchangerate-api.com/v6/";
     private static final HttpClient CLIENT = HttpClient.newHttpClient();
 
@@ -74,6 +82,29 @@ public class ConectaAPI {
         } catch (IOException | InterruptedException e) {
             System.out.println("Erro na comunicação com a API: " + e.getMessage());
             return null;
+        }
+    }
+
+    public void resultJson(String body) {
+
+        try {
+            JsonElement parsed = JsonParser.parseString(body);
+            JsonObject root = parsed.getAsJsonObject();
+            JsonObject rates = root.getAsJsonObject("conversion_rates");
+
+            double rate = rates.get(targetCurrency).getAsDouble();
+
+            System.out.printf("1 %s = %.4f %s%n",
+                    baseCurrency, rate, targetCurrency);
+
+            double exemplo = 100;
+            double converted = exemplo * rate;
+
+            System.out.printf("%.2f %s = %.2f %s%n",
+                    exemplo, baseCurrency, converted, targetCurrency);
+
+        } catch (Exception e) {
+            System.out.println("Erro ao processar JSON: " + e.getMessage());
         }
     }
 

@@ -3,14 +3,17 @@ import java.util.Scanner;
 public class Main {
     public static void main (String[] args) {
         Scanner sc = new Scanner(System.in);
-        OpcaoMenu opcao = null;
+        // Instância inicial — valores serão trocados depois conforme o menu
         ConectaAPI cotacao = new ConectaAPI("c9ac2cedfa959c28352d38f6","USD", "BRL");
-        cotacao.consultarCotacao();
+
+        OpcaoMenu opcao = null;
 
         while (opcao != OpcaoMenu.SAIR) {
+
             System.out.println("===== MENU CONVERSOR DE MOEDAS =====");
+
             for (OpcaoMenu op : OpcaoMenu.values()) {
-                System.out.println(op.getCodigo() + " - " + op.getDescricao());
+                System.out.println(op.getCodigo() + " - " + op.getBase() + " para " + op.getTarget());
             }
 
             System.out.println("Escolha um opção: ");
@@ -22,32 +25,25 @@ public class Main {
                 System.out.println("Opção inválida! Tente novamente. \n");
                 continue;
             }
-
-            switch (opcao) {
-                case USDTOBRL:
-                    System.out.println(">>USDTOBRL selecionado");
-                    break;
-                case BRLTOUSD:
-                    System.out.println(">>BRLTOUSD selecionado");
-                    break;
-                case USDTOARL:
-                    System.out.println(">>USDTOARL selecionado");
-                    break;
-                case ARLTOUSD:
-                    System.out.println(">>ARLTOUSD selecionado");
-                    break;
-                case BRLTOARL:
-                    System.out.println(">>BRLTOARL selecionado");
-                    break;
-                case ARLTOBRL:
-                    System.out.println(">>ARLTOBRL selecionado");
-                    break;
-                case SAIR:
-                    System.out.println(">>SAIR selecionado");
-                    break;
+            if (opcao == OpcaoMenu.SAIR) {
+                System.out.println("Encerrando...");
+                break;
             }
 
+            // Atualiza automaticamente a moeda base e a moeda destino
+            System.out.println(">> " + opcao.getBase() + " selecionado");
+
+            cotacao.setBaseCurrency(opcao.getBase());
+            cotacao.setTargetCurrency(opcao.getTarget());
+
+            // Efetua requisição à API
+            String resposta = cotacao.consultarCotacao();
+
+            // Processa e imprime o JSON
+            cotacao.resultJson(resposta);
+
             System.out.println();
+
         }
         sc.close();
     }

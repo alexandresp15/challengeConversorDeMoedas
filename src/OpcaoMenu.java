@@ -1,25 +1,32 @@
 public enum OpcaoMenu {
 
-    USDTOBRL(1, "UsdToBrl"),
-    BRLTOUSD(2,"BrlToUsd"),
-    USDTOARL(3,"ArlToUsd"),
-    ARLTOUSD(4,"ArlToUsd"),
-    BRLTOARL(5,"BrltoArl"),
-    ARLTOBRL(6,"ArltoBrl"),
-    SAIR(7, "Sair");
+    USDTOBRL(1, "USD", "BRL"),
+    BRLTOUSD(2,"BRL", "USD"),
+    USDTOARL(3,"USD", "ARS"),
+    ARLTOUSD(4,"ARS", "USD"),
+    BRLTOARL(5,"BRL", "ARS"),
+    ARLTOBRL(6,"ARS", "BRL"),
+    SAIR(7, "SAIR", "SAIR");
 
     private final int codigo;
-    private final String descricao;
+    private final String base;
+    private final String target;
 
-    OpcaoMenu(int codigo, String descricao) {
+    OpcaoMenu(int codigo, String base, String target) {
         this.codigo = codigo;
-        this.descricao = descricao;
+        this.base = base;
+        this.target = target;
     }
+
     public int getCodigo() {
         return codigo;
     }
-    public String getDescricao() {
-        return descricao;
+    public String getBase() {
+        return base;
+    }
+
+    public String getTarget() {
+        return target;
     }
 
     public static OpcaoMenu fromCodigo(int codigo) {
